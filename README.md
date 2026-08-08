@@ -2,6 +2,8 @@
 
 FloraSense is a full-stack web application that uses deep learning to detect diseases in crop leaves from a simple photo. Upload an image, and the model instantly classifies the plant's health status along with a confidence score and recommended action.
 
+project link- https://flora-sense-three.vercel.app
+
 The project currently supports **potato leaf disease detection**, identifying:
 - 🟢 **Healthy**
 - 🟠 **Early Blight**
