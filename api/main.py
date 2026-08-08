@@ -1,37 +1,40 @@
 from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import numpy as np
 from io import BytesIO
 from PIL import Image
 import tensorflow as tf
-from fastapi.middleware.cors import CORSMiddleware
-
-app = FastAPI()
-
-from fastapi import FastAPI, File, UploadFile
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000",
-                   "https://flora-sense-three.vercel.app",],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://flora-sense-three.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-MODEL = tf.keras.models.load_model("models/potato_model.keras")
-CLASS_NAMES = ["Early Blight","Late Blight","Healthy"]
+MODEL = tf.keras.models.load_model(
+    "models/potato_model.keras",
+    compile=False
+)
+
+CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
+
 
 @app.get("/ping")
 async def ping():
     return "Hello I am alive"
 
+
 def read_file_as_image(data) -> np.ndarray:
-    image = np.array(Image.open(BytesIO(data)))
-    return image
+    image = Image.open(BytesIO(data)).convert("RGB")
+    return np.array(image)
 
 
 @app.post("/predict")
@@ -51,6 +54,5 @@ async def predict(file: UploadFile = File(...)):
     }
 
 
-
 if __name__ == "__main__":
-    uvicorn.run(app, host='localhost', port=8000)
+    uvicorn.run(app, host="localhost", port=8000)
